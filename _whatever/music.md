@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: page
-title: Music
+title: 유튜브 플레이리스트
 ---
 
 https://youtube.com/playlist?list=PLYWZJt2J5IrQPuY-Fz4VzYpM6HT8AAYpl

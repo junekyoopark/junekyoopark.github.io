@@ -40,6 +40,9 @@ collections:
   ideas:
     output: true
     permalink: /ideas/:path/
+  whatever:
+    output: true
+    permalink: /whatever/:path/
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
