@@ -6,11 +6,11 @@ layout: page
 title: 아무말대잔치
 permalink: /whatever/
 ---
-{% for whatever in site.whatever %}
+{% for stuff in site.whatever %}
   <h2>
-    <a href="{{ whatever.url }}">
-      {{ whatever.title }}
+    <a href="{{ stuff.url }}">
+      {{ stuff.title }}
     </a>
   </h2>
-  <p> {{ whatever.content | markdownify | strip_html | truncatewords: 20 }}</p>
+  <p> {{ stuff.content | markdownify | strip_html | truncatewords: 20 }}</p>
 {% endfor %}
