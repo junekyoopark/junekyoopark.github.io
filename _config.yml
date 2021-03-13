@@ -16,7 +16,7 @@
 title: June-Kyoo Park
 email: junekyoopark@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
- 평범한 사이트 입니다. 제 서버는 아니니 디도스해도 소용없습니다. 풉. This is my site now.
+ 평범한 사이트 입니다. 제 서버는 아니니 디도스해도 상관없습니다. 풉. This is my site now.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 facebook_username: junekyoo.park
