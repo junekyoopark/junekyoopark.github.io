@@ -33,7 +33,7 @@ title: 헬로우!
 
 **엥 그냥 자습과 뭐가 다르죠?**
 1. 동기부여
-2. 주기적, 연속적 [(들때마나때아)](https://namu.wiki/w/%EB%93%A4%EC%96%B4%EC%98%AC%20%EB%95%8C%EB%8A%94%20%EB%A7%88%EC%9D%8C%EB%8C%80%EB%A1%9C%EC%98%80%EA%B2%A0%EC%A7%80%EB%A7%8C%20%EB%82%98%EA%B0%88%20%EB%95%8C%EB%8A%94%20%EC%95%84%EB%8B%88%EB%9E%80%EB%8B%A4)
+2. 주기적, 연속적 [(들때마나때아)](https://w.namu.la/s/16c180bfa6dc133ad4f8adaacf15a20cb7ca647d326244e24a3e851e429015517acd41084103c71f167b0c58c34eaddc733d9d91ab1215a8d25803da6b0295c3258e0626637596d67ca18f89cae0500f3bfd8ce85a7eed8662c7c091bdf0c080)
 3. 바로바로 질문
 등 자습보다 이점이 많아요!
 
