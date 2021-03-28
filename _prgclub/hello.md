@@ -25,7 +25,7 @@ title: 헬로우!
 6. 웹툰/유튜브/인터넷에 있는 모든 것 다운!
 7. 귀찮은 것 자동화!
 
-등 생각할 수 있는 것 모두 다!
+[등](https://developer-blogs.nvidia.com/news/wp-content/uploads/sites/3/2018/08/Sequence-01_1.gif) 생각할 수 있는 것 모두 다!
 
 **무엇이 필요하나요?**
 1. 몸
