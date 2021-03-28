@@ -52,6 +52,7 @@ title: 헬로우!
     ![(들때마나때아)](https://w.namu.la/s/16c180bfa6dc133ad4f8adaacf15a20cb7ca647d326244e24a3e851e429015517acd41084103c71f167b0c58c34eaddc733d9d91ab1215a8d25803da6b0295c3258e0626637596d67ca18f89cae0500f3bfd8ce85a7eed8662c7c091bdf0c080){: width="200" }
 
 3. 바로바로 질문
+
 등 자습보다 이점이 많아요!
 
 # **그럼 어떻게 join 하나요?**
