@@ -38,4 +38,4 @@ title: 헬로우!
 등 자습보다 이점이 많아요!
 
 # **어떻게 join 하나요?**
-이 [설문조사(10초)](https://forms.gle/jWa4V62FdELxDQ2B8)을 해주세요!
+이 [설문조사(10초)](https://forms.gle/jWa4V62FdELxDQ2B8)를 해주세요!
