@@ -43,6 +43,9 @@ collections:
   whatever:
     output: true
     permalink: /whatever/:path/
+  prgclub:
+    output: true
+    permalink: /prgclub/:path/
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
