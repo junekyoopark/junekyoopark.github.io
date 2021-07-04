@@ -31,13 +31,14 @@ while(True):
 	#face location on screen, format is: (top, right, bottom, left)
 	face_locations = face_recognition.face_locations(screen)
 
-	#center of faces 
+	#center of faces, draws a dot on them
 	center_all = []
 	for faces in face_locations:
 		center_face = (int(round(faces[1]+faces[3])/2), int(round(faces[2]+faces[0])/2))
 		center_all.append(center_face)
 		screen = cv2.circle(screen, center_face, 5, (0,0,255), -1)
 
+	#if more than one face, draws a dot on the center (mean) of them
 	if len(center_all) >= 1:
 		center_all = tuple(map(lambda x: int(round(sum(x)/len(x))), zip(*center_all)))
 		screen = cv2.circle(screen, center_all, 5, (255,0,0), -1)
