@@ -11,6 +11,6 @@ title: 드론
 2. flight controller + Ardupilot
 3. Camera module
 
-Data link between RPi and PC through UDP
+Connection between RPi and PC through UDP
 
 Face detection, object recognition, flight planning on server PC
