@@ -14,3 +14,10 @@ title: 드론
 Connection between RPi and PC through UDP
 
 Face detection, object recognition, flight planning on server PC
+
+1. UDP connection
+
+2. Face detection on server PC
+```python
+print("hello world")
+```
