@@ -1,8 +1,10 @@
 ---
 layout: default
-title: "Roll-PID Simulator"
+title: "Quadcopter Roll PID Simulator"
 permalink: /sim/
 ---
+
+<!-- you can remove these lines if you already include Bootstrap & Chart.js in your layout -->
 <link
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   rel="stylesheet"
@@ -10,7 +12,6 @@ permalink: /sim/
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  /* copy your existing styles here */
   html, body {
     height: 100%;
     margin: 0;
@@ -18,7 +19,10 @@ permalink: /sim/
     overflow: hidden;
   }
   .slider-label { font-size: 0.75rem; }
-  input[type="range"].form-range { height: 0.9rem; background-color: #dee2e6; }
+  input[type="range"].form-range {
+    height: 0.9rem;
+    background-color: #dee2e6;
+  }
   input[type="range"].form-range::-webkit-slider-runnable-track,
   input[type="range"].form-range::-moz-range-track {
     height: 0.35rem;
@@ -54,8 +58,47 @@ permalink: /sim/
     <h6 class="text-center mb-2">Quadcopter Roll PID Simulator</h6>
     <div class="row mb-2">
       <div class="col-md-6">
-        <!-- sliders & buttons… -->
-        <!-- (copy your existing markup from the `<head>` section) -->
+        <div class="slider-set">
+          <div class="row row-cols-2 row-cols-sm-3 g-2 mb-2">
+            <div class="col">
+              <label class="slider-label" for="kp">Kp: <span id="kpVal">2.00</span></label>
+              <input type="range" class="form-range" id="kp" min="0" max="10" step="0.01" value="2" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="ki">Ki: <span id="kiVal">1.00</span></label>
+              <input type="range" class="form-range" id="ki" min="0" max="10" step="0.01" value="1" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="kd">Kd: <span id="kdVal">0.50</span></label>
+              <input type="range" class="form-range" id="kd" min="0" max="5" step="0.01" value="0.5" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="mass">Mass (kg): <span id="massVal">2.0</span></label>
+              <input type="range" class="form-range" id="mass" min="0.1" max="10" step="0.1" value="2" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="arm">Arm (m): <span id="armVal">0.50</span></label>
+              <input type="range" class="form-range" id="arm" min="0.1" max="2" step="0.01" value="0.5" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="target">Target (°): <span id="targetVal">30</span></label>
+              <input type="range" class="form-range" id="target" min="-90" max="90" step="1" value="30" />
+            </div>
+            <div class="col">
+              <label class="slider-label" for="interval">Interval (ms): <span id="intervalVal">10</span></label>
+              <input type="range" class="form-range" id="interval" min="1" max="200" step="1" value="10" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-center mb-1">
+            <button id="startBtn" class="btn btn-primary btn-sm me-2">Start</button>
+            <button id="stopBtn" class="btn btn-secondary btn-sm" disabled>Stop</button>
+          </div>
+          <div class="d-flex justify-content-around metric">
+            <div>Rise: <span id="riseTime">N/A</span></div>
+            <div>Overshoot: <span id="overshoot">N/A</span></div>
+            <div>Settle: <span id="settleTime">N/A</span></div>
+          </div>
+        </div>
       </div>
       <div class="col-md-6 d-flex justify-content-center align-items-center">
         <canvas id="droneCanvas" width="600" height="600"></canvas>
@@ -68,129 +111,119 @@ permalink: /sim/
   </div>
 </div>
 
-  <script>
-    // update slider labels in real time
-    document.querySelectorAll('input[type=range]').forEach(slider => {
-      const span = document.getElementById(slider.id + 'Val');
-      slider.addEventListener('input', () => {
-        const prec = slider.step < 1 ? 2 : 0;
-        span.textContent = parseFloat(slider.value).toFixed(prec);
-      });
+<script>
+  document.querySelectorAll('input[type=range]').forEach(slider => {
+    const span = document.getElementById(slider.id + 'Val');
+    slider.addEventListener('input', () => {
+      const prec = slider.step < 1 ? 2 : 0;
+      span.textContent = parseFloat(slider.value).toFixed(prec);
     });
+  });
 
-    // initialize Chart.js
-    const chartCtx = document.getElementById('chartCanvas').getContext('2d');
-    const chart = new Chart(chartCtx, {
-      type: 'line',
-      data: {
-        datasets: [
-          { label: 'Angle (deg)', data: [], borderWidth: 2, fill: false, showLine: true, parsing: false },
-          { label: 'Target',      data: [], borderDash: [5, 5], fill: false, showLine: true, parsing: false }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        scales: {
-          x: { type: 'linear', title: { display: true, text: 'Time (s)' } },
-          y: { min: -90, max: 90, title: { display: true, text: 'Angle (deg)' } }
-        }
+  const chartCtx = document.getElementById('chartCanvas').getContext('2d');
+  const chart = new Chart(chartCtx, {
+    type: 'line',
+    data: {
+      datasets: [
+        { label: 'Angle (deg)', data: [], borderWidth: 2, fill: false, showLine: true, parsing: false },
+        { label: 'Target',      data: [], borderDash: [5, 5], fill: false, showLine: true, parsing: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'Time (s)' } },
+        y: { min: -90, max: 90, title: { display: true, text: 'Angle (deg)' } }
       }
-    });
-
-    let timer;
-    function startSim() {
-      // reset
-      chart.data.datasets.forEach(ds => ds.data = []);
-      ['riseTime','overshoot','settleTime'].forEach(id => document.getElementById(id).textContent = 'N/A');
-      document.getElementById('startBtn').disabled = true;
-      document.getElementById('stopBtn').disabled  = false;
-
-      let t = 0, angle = 0, omega = 0, errInt = 0, prevErr = 0, riseStart = null, maxAngle = -Infinity, lastTime = 0;
-      const dt = 0.01, sphereR = 0.1, scale = 300;
-
-      timer = setInterval(() => {
-        // read params
-        const Kp   = +document.getElementById('kp').value;
-        const Ki   = +document.getElementById('ki').value;
-        const Kd   = +document.getElementById('kd').value;
-        const mass = +document.getElementById('mass').value;
-        const arm  = +document.getElementById('arm').value;
-        const tgt  = +document.getElementById('target').value;
-        const I    = 0.4 * mass * sphereR * sphereR;
-
-        // PID
-        const des = tgt * Math.PI/180;
-        const err = des - angle;
-        errInt += err * dt;
-        const dErr = (err - prevErr) / dt;
-        const tau  = Kp*err + Ki*errInt + Kd*dErr;
-        omega += (arm * tau / I) * dt;
-        angle += omega * dt;
-        prevErr = err;
-
-        // performance metrics
-        const deg = angle * 180/Math.PI;
-        if (riseStart === null && deg >= 0.1 * tgt) riseStart = t;
-        if (riseStart !== null && deg >= 0.9 * tgt && document.getElementById('riseTime').textContent === 'N/A') {
-          document.getElementById('riseTime').textContent = (t - riseStart).toFixed(2) + 's';
-        }
-        maxAngle = Math.max(maxAngle, deg);
-        if (tgt !== 0) {
-          const overs = (maxAngle - tgt) / Math.abs(tgt) * 100;
-          document.getElementById('overshoot').textContent = overs.toFixed(1) + '%';
-        }
-        const band = 0.02 * Math.abs(tgt);
-        if (Math.abs(deg - tgt) > band) lastTime = t;
-        document.getElementById('settleTime').textContent = lastTime.toFixed(2) + 's';
-
-        // update chart
-        chart.data.datasets[0].data.push({ x: t, y: deg });
-        chart.data.datasets[1].data = [
-          { x: 0, y: tgt },
-          { x: Math.max(10, t), y: tgt }
-        ];
-        chart.options.scales.x.max = Math.max(10, t);
-        chart.update();
-
-        // draw the drone
-        const dctx = document.getElementById('droneCanvas').getContext('2d');
-        dctx.clearRect(0, 0, dctx.canvas.width, dctx.canvas.height);
-        dctx.save();
-        dctx.translate(dctx.canvas.width/2, dctx.canvas.height/2);
-        dctx.rotate(angle);
-        dctx.fillStyle = 'black';
-        dctx.beginPath();
-        dctx.arc(0, 0, sphereR * scale, 0, 2 * Math.PI);
-        dctx.fill();
-        dctx.strokeStyle = 'black';
-        dctx.lineWidth = 4;
-        dctx.beginPath();
-        dctx.moveTo(-arm * scale / 2, 0);
-        dctx.lineTo( arm * scale / 2, 0);
-        dctx.stroke();
-        const off = -arm * scale * 0.02, pLen = arm * scale * 0.02;
-        [-arm * scale / 2, arm * scale / 2].forEach(x => {
-          dctx.strokeStyle = 'red';
-          dctx.lineWidth = arm * scale * 0.1;
-          dctx.beginPath();
-          dctx.moveTo(x, off + pLen/2);
-          dctx.lineTo(x, off - pLen/2);
-          dctx.stroke();
-        });
-        dctx.restore();
-
-        t += dt;
-      }, +document.getElementById('interval').value);
     }
+  });
 
-    document.getElementById('startBtn').onclick = startSim;
-    document.getElementById('stopBtn').onclick  = () => {
-      clearInterval(timer);
-      document.getElementById('startBtn').disabled = false;
-      document.getElementById('stopBtn').disabled  = true;
-    };
-  </script>
-</body>
-</html>
+  let timer;
+  function startSim() {
+    chart.data.datasets.forEach(ds => ds.data = []);
+    ['riseTime','overshoot','settleTime'].forEach(id => document.getElementById(id).textContent = 'N/A');
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('stopBtn').disabled  = false;
+
+    let t = 0, angle = 0, omega = 0, errInt = 0, prevErr = 0, riseStart = null, maxAngle = -Infinity, lastTime = 0;
+    const dt = 0.01, sphereR = 0.1, scale = 300;
+
+    timer = setInterval(() => {
+      const Kp   = +document.getElementById('kp').value;
+      const Ki   = +document.getElementById('ki').value;
+      const Kd   = +document.getElementById('kd').value;
+      const mass = +document.getElementById('mass').value;
+      const arm  = +document.getElementById('arm').value;
+      const tgt  = +document.getElementById('target').value;
+      const I    = 0.4 * mass * sphereR * sphereR;
+
+      const des = tgt * Math.PI/180;
+      const err = des - angle;
+      errInt += err * dt;
+      const dErr = (err - prevErr) / dt;
+      const tau  = Kp*err + Ki*errInt + Kd*dErr;
+      omega += (arm * tau / I) * dt;
+      angle += omega * dt;
+      prevErr = err;
+
+      const deg = angle * 180/Math.PI;
+      if (riseStart === null && deg >= 0.1 * tgt) riseStart = t;
+      if (riseStart !== null && deg >= 0.9 * tgt && document.getElementById('riseTime').textContent === 'N/A') {
+        document.getElementById('riseTime').textContent = (t - riseStart).toFixed(2) + 's';
+      }
+      maxAngle = Math.max(maxAngle, deg);
+      if (tgt !== 0) {
+        const overs = (maxAngle - tgt) / Math.abs(tgt) * 100;
+        document.getElementById('overshoot').textContent = overs.toFixed(1) + '%';
+      }
+      const band = 0.02 * Math.abs(tgt);
+      if (Math.abs(deg - tgt) > band) lastTime = t;
+      document.getElementById('settleTime').textContent = lastTime.toFixed(2) + 's';
+
+      chart.data.datasets[0].data.push({ x: t, y: deg });
+      chart.data.datasets[1].data = [
+        { x: 0, y: tgt },
+        { x: Math.max(10, t), y: tgt }
+      ];
+      chart.options.scales.x.max = Math.max(10, t);
+      chart.update();
+
+      const dctx = document.getElementById('droneCanvas').getContext('2d');
+      dctx.clearRect(0, 0, dctx.canvas.width, dctx.canvas.height);
+      dctx.save();
+      dctx.translate(dctx.canvas.width/2, dctx.canvas.height/2);
+      dctx.rotate(angle);
+      dctx.fillStyle = 'black';
+      dctx.beginPath();
+      dctx.arc(0, 0, sphereR * scale, 0, 2 * Math.PI);
+      dctx.fill();
+      dctx.strokeStyle = 'black';
+      dctx.lineWidth = 4;
+      dctx.beginPath();
+      dctx.moveTo(-arm * scale / 2, 0);
+      dctx.lineTo( arm * scale / 2, 0);
+      dctx.stroke();
+      const off = -arm * scale * 0.02, pLen = arm * scale * 0.02;
+      [-arm * scale / 2, arm * scale / 2].forEach(x => {
+        dctx.strokeStyle = 'red';
+        dctx.lineWidth = arm * scale * 0.1;
+        dctx.beginPath();
+        dctx.moveTo(x, off + pLen/2);
+        dctx.lineTo(x, off - pLen/2);
+        dctx.stroke();
+      });
+      dctx.restore();
+
+      t += dt;
+    }, +document.getElementById('interval').value);
+  }
+
+  document.getElementById('startBtn').onclick = startSim;
+  document.getElementById('stopBtn').onclick  = () => {
+    clearInterval(timer);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled  = true;
+  };
+</script>
