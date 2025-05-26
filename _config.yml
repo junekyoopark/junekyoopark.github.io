@@ -46,9 +46,6 @@ collections:
   prgclub:
     output: true
     permalink: /prgclub/:path/
-  sim:
-    output: true
-    permalink: /sim/:path/
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
