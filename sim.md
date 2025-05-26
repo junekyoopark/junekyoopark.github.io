@@ -3,132 +3,70 @@ layout: default
 title: "Roll-PID Simulator"
 permalink: /sim/
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quadcopter Roll PID Simulator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    .slider-label {
-      font-size: 0.75rem;
-    }
+<style>
+  /* copy your existing styles here */
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  .slider-label { font-size: 0.75rem; }
+  input[type="range"].form-range { height: 0.9rem; background-color: #dee2e6; }
+  input[type="range"].form-range::-webkit-slider-runnable-track,
+  input[type="range"].form-range::-moz-range-track {
+    height: 0.35rem;
+    background: #0d6efd;
+    border-radius: 0.25rem;
+  }
+  #droneCanvas {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 40vh;
+    aspect-ratio: 1/1;
+    border: 1px solid #ccc;
+  }
+  .container-fluid { flex: 0 0 auto; }
+  #chartContainer {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+  }
+  #chartCanvas {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+  }
+  .metric { font-size: 0.8rem; }
+  .slider-set { max-width: 100%; height: auto; }
+</style>
 
-    input[type="range"].form-range {
-      height: 0.9rem;
-      background-color: #dee2e6;
-    }
-
-    input[type="range"].form-range::-webkit-slider-runnable-track,
-    input[type="range"].form-range::-moz-range-track {
-      height: 0.35rem;
-      background: #0d6efd;
-      border-radius: 0.25rem;
-    }
-
-    #droneCanvas {
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 40vh;
-      aspect-ratio: 1/1;
-      border: 1px solid #ccc;
-    }
-
-    /* controls area should size to content */
-    .container-fluid {
-      flex: 0 0 auto;
-    }
-
-    /* magic flex fix so chart fills remaining space even when maximized */
-    #chartContainer {
-      flex: 1 1 0;
-      min-height: 0;
-      display: flex;
-    }
-    #chartCanvas {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      border: 1px solid #ccc;
-    }
-
-    .metric {
-      font-size: 0.8rem;
-    }
-
-    .slider-set {
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
-</head>
-<body>
-  <div class="d-flex flex-column" style="height: 100vh;">
-    <div class="container-fluid py-1 px-2">
-      <h6 class="text-center mb-2">Quadcopter Roll PID Simulator</h6>
-      <div class="row mb-2">
-        <div class="col-md-6">
-          <div class="slider-set">
-            <div class="row row-cols-2 row-cols-sm-3 g-2 mb-2">
-              <div class="col">
-                <label class="slider-label" for="kp">Kp: <span id="kpVal">2.00</span></label>
-                <input type="range" class="form-range" id="kp" min="0" max="10" step="0.01" value="2" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="ki">Ki: <span id="kiVal">1.00</span></label>
-                <input type="range" class="form-range" id="ki" min="0" max="10" step="0.01" value="1" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="kd">Kd: <span id="kdVal">0.50</span></label>
-                <input type="range" class="form-range" id="kd" min="0" max="5" step="0.01" value="0.5" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="mass">Mass (kg): <span id="massVal">2.0</span></label>
-                <input type="range" class="form-range" id="mass" min="0.1" max="10" step="0.1" value="2" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="arm">Arm (m): <span id="armVal">0.50</span></label>
-                <input type="range" class="form-range" id="arm" min="0.1" max="2" step="0.01" value="0.5" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="target">Target (°): <span id="targetVal">30</span></label>
-                <input type="range" class="form-range" id="target" min="-90" max="90" step="1" value="30" />
-              </div>
-              <div class="col">
-                <label class="slider-label" for="interval">Interval (ms): <span id="intervalVal">10</span></label>
-                <input type="range" class="form-range" id="interval" min="1" max="200" step="1" value="10" />
-              </div>
-            </div>
-            <div class="d-flex justify-content-center mb-1">
-              <button id="startBtn" class="btn btn-primary btn-sm me-2">Start</button>
-              <button id="stopBtn" class="btn btn-secondary btn-sm" disabled>Stop</button>
-            </div>
-            <div class="d-flex justify-content-around metric">
-              <div>Rise: <span id="riseTime">N/A</span></div>
-              <div>Overshoot: <span id="overshoot">N/A</span></div>
-              <div>Settle: <span id="settleTime">N/A</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 d-flex justify-content-center align-items-center">
-          <canvas id="droneCanvas" width="600" height="600"></canvas>
-        </div>
+<div class="d-flex flex-column" style="height: 100vh;">
+  <div class="container-fluid py-1 px-2">
+    <h6 class="text-center mb-2">Quadcopter Roll PID Simulator</h6>
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <!-- sliders & buttons… -->
+        <!-- (copy your existing markup from the `<head>` section) -->
+      </div>
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <canvas id="droneCanvas" width="600" height="600"></canvas>
       </div>
     </div>
-    <div id="chartContainer">
-      <canvas id="chartCanvas"></canvas>
-    </div>
   </div>
+
+  <div id="chartContainer">
+    <canvas id="chartCanvas"></canvas>
+  </div>
+</div>
 
   <script>
     // update slider labels in real time
