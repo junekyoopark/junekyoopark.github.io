@@ -65,6 +65,24 @@
       max-width: 100%;
       height: auto;
     }
+    /* Mobile-specific adjustments */
+    @media (max-width: 576px) {
+    .d-flex.flex-column {
+        height: auto !important;
+    }
+
+    /* Make the chart take more space */
+    #chartContainer {
+        flex: 0 0 auto;
+        height: 60vh !important;
+    }
+
+    /* Make the drone visualization smaller */
+    #droneCanvas {
+        max-height: 25vh;
+    }
+    }
+
   </style>
 </head>
 <body>
